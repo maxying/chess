@@ -1,16 +1,24 @@
 package chess
 package logic
 
-case class Board(self: Map[Coord, Piece]) {}
+case class Board(self: Map[Coord, Piece]) {
+  def pieces: Set[Piece] = self.values.toSet
 
-object Board {
-  def createFrom(pieces: Iterable[Piece]): Board = {
-    Board(pieces
-      .groupBy(_.coord)
-      .map { case (coord, wrapped) => (coord, wrapped.head) })
+  def findKing(color: Color): Piece = {
+    pieces
+      .find(p => p.isInstanceOf[King] && p.color == color)
+      .getOrElse(throw new IllegalStateException(s"$color King is missing from the Board!"))
   }
 
-  def INIT: Board = {
+  def inCheck(color: Color): Boolean = {
+    val king = findKing(color)
+    pieces.exists(p => p != king && p.canAttack(king, self))
+  }
+
+}
+
+object Board {
+  val INIT: Board = {
     def pawns: Seq[Piece] = (1 to 8).flatMap { col =>
       List(
         Pawn(White, (2, col), hasMoved = false),
@@ -31,6 +39,12 @@ object Board {
       Bishop(Black, (8, 3)), Bishop(Black, (8, 6))
     )
     createFrom(pawns ++ royalty ++ others)
+  }
+
+  def createFrom(pieces: Iterable[Piece]): Board = {
+    Board(pieces
+      .groupBy(_.coord)
+      .map { case (coord, wrapped) => (coord, wrapped.head) })
   }
 
 }
