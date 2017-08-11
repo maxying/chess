@@ -1,4 +1,6 @@
-package chess.logic
+package chess
+package logic
+
 
 case class GameState(board: Board, turn: Color, captured: Map[Piece, Int], history: List[Board]) {
   import GameState._
@@ -17,17 +19,32 @@ case class GameState(board: Board, turn: Color, captured: Map[Piece, Int], histo
   }
 }
 
+//noinspection NameBooleanParameters
 object GameState {
-  val DEAD_PAWN_WHITE = Pawn(White, (0, 0), false)
-  val DEAD_PAWN_BLACK = Pawn(Black, (0, 0), false)
-  val DEAD_ROOK_WHITE = Rook(White, (0, 0), false)
-  val DEAD_ROOK_BLACK = Rook(Black, (0, 0), false)
-  val DEAD_KNIGHT_WHITE = Knight(White, (0, 0))
-  val DEAD_KNIGHT_BLACK = Knight(Black, (0, 0))
-  val DEAD_BISHOP_WHITE = Bishop(White, (0, 0))
-  val DEAD_BISHOP_BLACK = Bishop(Black, (0, 0))
-  val DEAD_QUEEN_WHITE = Queen(White, (0, 0))
-  val DEAD_QUEEN_BLACK = Queen(Black, (0, 0))
+  val GRAVE: Coord = (0, 0)
+  val DEAD_PAWN_WHITE = Pawn(White, GRAVE, false)
+  val DEAD_PAWN_BLACK = Pawn(Black, GRAVE, false)
+  val DEAD_ROOK_WHITE = Rook(White, GRAVE, false)
+  val DEAD_ROOK_BLACK = Rook(Black, GRAVE, false)
+  val DEAD_KNIGHT_WHITE = Knight(White, GRAVE)
+  val DEAD_KNIGHT_BLACK = Knight(Black, GRAVE)
+  val DEAD_BISHOP_WHITE = Bishop(White, GRAVE)
+  val DEAD_BISHOP_BLACK = Bishop(Black, GRAVE)
+  val DEAD_QUEEN_WHITE = Queen(White, GRAVE)
+  val DEAD_QUEEN_BLACK = Queen(Black, GRAVE)
 
-  val INIT: GameState = GameState(Board.INIT, White, Map.empty, List.empty)
+  val INIT_GRAVEYARD: Map[Piece, Int] = Map(
+    DEAD_PAWN_WHITE -> 0,
+    DEAD_PAWN_BLACK -> 0,
+    DEAD_ROOK_WHITE -> 0,
+    DEAD_ROOK_BLACK -> 0,
+    DEAD_KNIGHT_WHITE -> 0,
+    DEAD_KNIGHT_BLACK -> 0,
+    DEAD_BISHOP_WHITE -> 0,
+    DEAD_BISHOP_BLACK -> 0,
+    DEAD_QUEEN_WHITE -> 0,
+    DEAD_QUEEN_BLACK -> 0
+  )
+
+  val INIT: GameState = GameState(Board.INIT, White, INIT_GRAVEYARD, List.empty)
 }

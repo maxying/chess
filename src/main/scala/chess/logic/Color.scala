@@ -1,5 +1,5 @@
 package chess.logic
 
-sealed trait Color
-case object White extends Color
-case object Black extends Color
+sealed trait Color { def opp: Color }
+case object White extends Color { def opp: Color = Black }
+case object Black extends Color { def opp: Color = White }

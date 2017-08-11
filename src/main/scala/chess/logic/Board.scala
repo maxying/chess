@@ -1,8 +1,8 @@
 package chess
 package logic
 
-case class Board(self: Map[Coord, Piece]) {
-  def pieces: Set[Piece] = self.values.toSet
+case class Board(pieces: Set[Piece]) {
+  val self: Map[Coord, Piece] = pieces.map(p => (p.coord, p)).toMap
 
   def findKing(color: Color): Piece = {
     pieces
@@ -10,9 +10,29 @@ case class Board(self: Map[Coord, Piece]) {
       .getOrElse(throw new IllegalStateException(s"$color King is missing from the Board!"))
   }
 
+  def piecesAttacking(color: Color, coord: Coord): Set[Piece] = {
+    pieces.filter(p => p.color == color && p.canAttack(coord, this))
+  }
+
+  def occupied(coord: Coord): Boolean = self.contains(coord)
+
+  def unoccupied(coord: Coord): Boolean = !occupied(coord)
+
   def inCheck(color: Color): Boolean = {
     val king = findKing(color)
-    pieces.exists(p => p != king && p.canAttack(king, self))
+    piecesAttacking(color.opp, king.coord).nonEmpty
+  }
+
+  def allActions: Set[(Piece, Action)] = {
+    for {
+      piece <- pieces
+      action <- piece.allActions(this)
+    } yield (piece, action)
+  }
+
+  def applyAction(piece: Piece, action: Action): Board = action match {
+    case BasicMove(target) => Board(pieces - piece + piece.applyAction(action))
+    case Capture(victim) => Board(pieces - victim + piece.applyAction(action))
   }
 
 }
@@ -42,9 +62,7 @@ object Board {
   }
 
   def createFrom(pieces: Iterable[Piece]): Board = {
-    Board(pieces
-      .groupBy(_.coord)
-      .map { case (coord, wrapped) => (coord, wrapped.head) })
+    Board(pieces.toSet)
   }
 
 }
