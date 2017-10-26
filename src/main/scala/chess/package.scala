@@ -1,18 +1,12 @@
 package object chess {
-  implicit class InStuff[T](val x: T) extends AnyVal {
-    def in(coll: Seq[T]): Boolean = coll.contains(x)
-    def in(coll: Set[T]): Boolean = coll.contains(x)
-    def in(coll: Map[T, _]): Boolean = coll.contains(x)
-
-    def notIn(coll: Seq[T]): Boolean = !coll.contains(x)
-    def notIn(coll: Set[T]): Boolean = !coll.contains(x)
-    def notIn(coll: Map[T, _]): Boolean = !coll.contains(x)
-  }
-
   /**
-    * (Row/Rank, Column/File), each from 1 to 8
-    * White takes rows 1 and 2. Black takes rows 3 and 4
+    * (Row/Rank, Column/File)<br>
+    * White takes rows 1 and 2; Black takes rows 7 and 8
     */
   type Coord = (Int, Int)
+
+  implicit class CoordAddition(lhs: Coord) {
+    def +(rhs: Coord): Coord = (lhs._1 + rhs._1, lhs._2 + rhs._2)
+  }
 
 }
